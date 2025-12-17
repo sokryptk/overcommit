@@ -52,7 +52,7 @@ func main() {
 
 	m := components.PageView{Page: components.SELECTION, Selector: &selector, Committer: &committer, Template: c.Template}
 
-	if err := tea.NewProgram(m, tea.WithAltScreen(), tea.WithANSICompressor()).Start(); err != nil {
+	if err := tea.NewProgram(m).Start(); err != nil {
 		fmt.Println("Error running program:", err)
 		os.Exit(1)
 	}
