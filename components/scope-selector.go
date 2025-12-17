@@ -63,7 +63,6 @@ func (s *ScopeSelectorView) Update(msg tea.Msg, v PageView) (PageView, tea.Cmd) 
 
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
-		s.view.SetSize(msg.Width, msg.Height)
 		return v, nil
 	case tea.KeyMsg:
 		switch msg.String() {

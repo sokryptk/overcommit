@@ -78,7 +78,6 @@ func (tsv *TypeSelectorView) Update(msg tea.Msg, v PageView) (PageView, tea.Cmd)
 
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
-		tsv.view.SetSize(msg.Width, msg.Height)
 		return v, nil
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {
