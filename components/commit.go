@@ -33,8 +33,6 @@ func (i *CommitView) Update(msg tea.Msg, v PageView) (PageView, tea.Cmd) {
 	case tea.KeyMsg:
 		switch keypress := msg.String(); keypress {
 		case "enter":
-			v.message = i.msgInput.Value()
-
 			fileName := os.Args[1]
 			_ = utils.ReplaceHeaderFromCommit(utils.BuildPrefixWithMsg(v.Template, v.selected.Prefix, i.msgInput.Value()), fileName)
 
