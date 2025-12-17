@@ -21,16 +21,15 @@ func NewTypeSelector(keys []utils.Key) TypeSelectorView {
 	// just a type coercion
 	items := keysToItems(keys)
 
-	li := list.New(items, listDelegate{}, 40, 14)
-
+	li := list.New(items, listDelegate{}, 40, len(items)+4)
+	li.Title = "Select commit type:"
 	li.SetShowTitle(true)
-	li.Styles.StatusBar = lipgloss.NewStyle().UnsetPaddingLeft().UnsetMarginLeft().MarginBottom(1)
-	li.Title = "What is the type of the commit?"
-	li.Styles.Title = lipgloss.NewStyle().Foreground(lipgloss.Color("#8AA8F9"))
-	li.Styles.TitleBar = lipgloss.NewStyle().UnsetPaddingLeft().UnsetMarginLeft().Bold(true)
-	li.Styles.HelpStyle = lipgloss.NewStyle().UnsetFaint()
-
+	li.SetShowStatusBar(false)
+	li.SetShowPagination(false)
+	li.SetShowHelp(false)
 	li.SetFilteringEnabled(true)
+	li.Styles.Title = lipgloss.NewStyle().Foreground(lipgloss.Color("#8AA8F9")).Bold(true)
+	li.Styles.TitleBar = lipgloss.NewStyle()
 	return TypeSelectorView{
 		view: li,
 	}

@@ -41,12 +41,19 @@ func NewScopeSelector(scopes []string) ScopeSelectorView {
 		items[i] = scopeItem(s)
 	}
 
-	li := list.New(items, scopeDelegate{}, 40, 10)
-	li.Title = "Select scope (Enter to skip)"
+	height := len(items) + 4
+	if height > 12 {
+		height = 12
+	}
+	li := list.New(items, scopeDelegate{}, 40, height)
+	li.Title = "Select scope (Esc to skip):"
 	li.SetShowTitle(true)
-	li.Styles.Title = lipgloss.NewStyle().Foreground(lipgloss.Color("#8AA8F9"))
-	li.Styles.TitleBar = lipgloss.NewStyle().Bold(true)
+	li.SetShowStatusBar(false)
+	li.SetShowPagination(false)
+	li.SetShowHelp(false)
 	li.SetFilteringEnabled(true)
+	li.Styles.Title = lipgloss.NewStyle().Foreground(lipgloss.Color("#8AA8F9")).Bold(true)
+	li.Styles.TitleBar = lipgloss.NewStyle()
 
 	return ScopeSelectorView{view: li}
 }
