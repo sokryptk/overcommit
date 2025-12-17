@@ -102,10 +102,13 @@ func (c *CommitView) Update(msg tea.Msg, v PageView) (PageView, tea.Cmd) {
 			}
 			c.err = ""
 
-			fileName := os.Args[1]
 			commitMsg := utils.BuildCommitMessage(v.Template, v.selected.Prefix, v.scope, val)
-			_ = utils.ReplaceHeaderFromCommit(commitMsg, fileName)
-			return PageView{}, tea.Quit
+			v.FinalMessage = commitMsg
+
+			if len(os.Args) > 1 {
+				_ = utils.ReplaceHeaderFromCommit(commitMsg, os.Args[1])
+			}
+			return v, tea.Quit
 		}
 	}
 

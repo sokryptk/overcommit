@@ -21,6 +21,7 @@ type PageView struct {
 	Selector      *TypeSelectorView
 	ScopeSelector *ScopeSelectorView
 	Committer     *CommitView
+	FinalMessage  string
 }
 
 func (p PageView) Init() tea.Cmd {
