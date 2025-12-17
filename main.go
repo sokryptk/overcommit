@@ -49,7 +49,7 @@ func main() {
 
 	selector := components.NewTypeSelector(c.Keys)
 	scopeSelector := components.NewScopeSelector(utils.GetScopes())
-	committer := components.NewCommitView(c.Lint.MaxSubjectLength)
+	committer := components.NewCommitView(c.Lint.MaxSubjectLength, c.LLM)
 
 	m := components.PageView{
 		Page:          components.SELECTION,
