@@ -23,12 +23,36 @@ func main() {
 	}
 
 	if len(os.Args) > 1 && (os.Args[1] == "-i" || os.Args[1] == "--init") {
-		exec.Command("git", "config", "alias.c", "!overcommit").Run()
-		fmt.Println("overcommit installed!")
-		fmt.Println("use: git c")
+		initRepo()
 		return
 	}
 
+	runTUI()
+}
+
+func initRepo() {
+	hookDir := ".githooks"
+	os.MkdirAll(hookDir, 0755)
+
+	hook := `#!/bin/sh
+msg=$(head -1 "$1")
+if ! echo "$msg" | grep -qE '^(feat|fix|docs|style|refactor|test|chore)(\(.+\))?: .+'; then
+  echo "bad commit message: $msg"
+  echo ""
+  echo "expected: type(scope): message"
+  echo "types: feat|fix|docs|style|refactor|test|chore"
+  echo ""
+  echo "use 'overcommit' for easy conventional commits"
+  exit 1
+fi
+`
+	os.WriteFile(hookDir+"/commit-msg", []byte(hook), 0755)
+	exec.Command("git", "config", "core.hooksPath", hookDir).Run()
+
+	fmt.Println("done. commit .githooks/ to enforce for team")
+}
+
+func runTUI() {
 	c, err := utils.LoadConfig(config)
 	if err != nil {
 		log.Fatal(err)
@@ -57,10 +81,8 @@ func main() {
 		return
 	}
 
-	if len(os.Args) <= 1 {
-		cmd := exec.Command("git", "commit", "-m", result.FinalMessage)
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stderr
-		cmd.Run()
-	}
+	cmd := exec.Command("git", "commit", "-m", result.FinalMessage)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Run()
 }
