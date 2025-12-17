@@ -3,11 +3,13 @@ package main
 import (
 	_ "embed"
 	"fmt"
-	tea "github.com/charmbracelet/bubbletea"
 	"log"
+	"os"
+	"os/exec"
+
+	tea "github.com/charmbracelet/bubbletea"
 	"me.kryptk.overcommit/components"
 	"me.kryptk.overcommit/utils"
-	"os"
 )
 
 //go:embed config.toml
@@ -32,11 +34,14 @@ func main() {
 		isInit := os.Args[1] == "-i" || os.Args[1] == "--init"
 
 		if isInit {
-			//back up previous stuff
 			_ = os.Rename(os.ExpandEnv(fmt.Sprintf("%s.sample", hook)), os.ExpandEnv(fmt.Sprintf("%s.bak", hook)))
-			_ = os.WriteFile(os.ExpandEnv(hook), []byte("overcommit $1 $2"), 0755)
+			hookScript := "#!/bin/sh\novercommit \"$1\" \"$2\"\n"
+			_ = os.WriteFile(os.ExpandEnv(hook), []byte(hookScript), 0755)
 
-			fmt.Println(os.ExpandEnv("Successfully set up overcommit in $PWD!"))
+			exec.Command("git", "config", "alias.oc", "commit --no-edit").Run()
+
+			fmt.Println("overcommit installed!")
+			fmt.Println("use: git oc")
 
 			return
 		}
