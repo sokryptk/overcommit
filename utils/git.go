@@ -20,10 +20,6 @@ func extractRegionAndMsg(str string) (string, string) {
 	return "", str
 }
 
-func init() {
-	ReplaceHeaderFromCommit("Dumbledore", "hallo.txt")
-}
-
 func BuildPrefixWithMsg(template Template, prefix string, msg string) string {
 	region, msg := extractRegionAndMsg(msg)
 
