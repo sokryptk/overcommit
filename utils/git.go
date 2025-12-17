@@ -63,6 +63,7 @@ func GetCommitMsgFromFile(fileName string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	defer file.Close()
 
 	if scanner := bufio.NewScanner(file); scanner.Scan() {
 		line := scanner.Text()
