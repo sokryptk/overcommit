@@ -102,14 +102,16 @@ func (tsv *TypeSelectorView) Update(msg tea.Msg, v PageView) (PageView, tea.Cmd)
 
 			v.Page = MSG
 		default:
-			index, err := strconv.Atoi(keypress) 
+			index, err := strconv.Atoi(keypress)
 			if err != nil {
 				break
 			}
-			
+
 			// since indexes are starting from 1
 			// a list of 5 elements will have 1,2,3,4,5 as their index
-			if index <= len(tsv.view.Items()) {
+			if index >= 1 && index <= len(tsv.view.Items()) {
+				v.selected = tsv.view.Items()[index-1].(utils.Key)
+
 				// Only fresh commits have 3 args, resets, rebases don't
 				if len(os.Args) >= 3 {
 					fileName := os.Args[1]
@@ -123,6 +125,8 @@ func (tsv *TypeSelectorView) Update(msg tea.Msg, v PageView) (PageView, tea.Cmd)
 
 					return PageView{}, tea.Quit
 				}
+
+				v.Page = MSG
 			}
 		}
 	}
