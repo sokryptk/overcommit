@@ -48,9 +48,16 @@ func main() {
 	}
 
 	selector := components.NewTypeSelector(c.Keys)
+	scopeSelector := components.NewScopeSelector(utils.GetScopes())
 	committer := components.NewCommitView(c.Lint.MaxSubjectLength)
 
-	m := components.PageView{Page: components.SELECTION, Selector: &selector, Committer: &committer, Template: c.Template}
+	m := components.PageView{
+		Page:          components.SELECTION,
+		Selector:      &selector,
+		ScopeSelector: &scopeSelector,
+		Committer:     &committer,
+		Template:      c.Template,
+	}
 
 	if err := tea.NewProgram(m).Start(); err != nil {
 		fmt.Println("Error running program:", err)

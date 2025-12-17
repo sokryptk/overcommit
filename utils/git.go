@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"os/exec"
+	"regexp"
 	"strings"
 )
 
@@ -28,6 +30,13 @@ func BuildPrefixWithMsg(template Template, prefix string, msg string) string {
 	}
 
 	return ExpandTemplate(template.Normal, prefix, region, msg)
+}
+
+func BuildCommitMessage(template Template, prefix string, scope string, msg string) string {
+	if scope != "" {
+		return ExpandTemplate(template.Region, prefix, scope, msg)
+	}
+	return ExpandTemplate(template.Normal, prefix, "", msg)
 }
 
 func ReplaceHeaderFromCommit(text string, filename string) error {
@@ -73,5 +82,46 @@ func GetCommitMsgFromFile(fileName string) (string, error) {
 
 
 	return "", fmt.Errorf("invalid")
+}
 
+func GetScopes() []string {
+	seen := make(map[string]bool)
+	var scopes []string
+
+	addScope := func(s string) {
+		s = strings.TrimSpace(s)
+		if s != "" && !seen[s] {
+			seen[s] = true
+			scopes = append(scopes, s)
+		}
+	}
+
+	// Get scopes from past commits
+	out, err := exec.Command("git", "log", "--oneline", "-100", "--format=%s").Output()
+	if err == nil {
+		re := regexp.MustCompile(`^\w+\(([^)]+)\):`)
+		for _, line := range strings.Split(string(out), "\n") {
+			if matches := re.FindStringSubmatch(line); len(matches) > 1 {
+				addScope(matches[1])
+			}
+		}
+	}
+
+	// Get top-level directories
+	entries, err := os.ReadDir(".")
+	if err == nil {
+		exclude := map[string]bool{".git": true, "node_modules": true, "vendor": true, ".idea": true, ".vscode": true}
+		for _, e := range entries {
+			if e.IsDir() && !exclude[e.Name()] && !strings.HasPrefix(e.Name(), ".") {
+				addScope(e.Name())
+			}
+		}
+	}
+
+	return scopes
+}
+
+func GetStagedDiff() (string, error) {
+	out, err := exec.Command("git", "diff", "--cached").Output()
+	return string(out), err
 }

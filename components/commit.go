@@ -47,7 +47,8 @@ func (i *CommitView) Update(msg tea.Msg, v PageView) (PageView, tea.Cmd) {
 			i.err = ""
 
 			fileName := os.Args[1]
-			_ = utils.ReplaceHeaderFromCommit(utils.BuildPrefixWithMsg(v.Template, v.selected.Prefix, val), fileName)
+			commitMsg := utils.BuildCommitMessage(v.Template, v.selected.Prefix, v.scope, val)
+			_ = utils.ReplaceHeaderFromCommit(commitMsg, fileName)
 			return PageView{}, tea.Quit
 		}
 	}
@@ -67,6 +68,9 @@ func (i CommitView) View(v PageView) string {
 	}
 
 	view := fmt.Sprintf("%s : %s - %s\n", style("[Commit Type]"), v.selected.Prefix, v.selected.Description)
+	if v.scope != "" {
+		view += fmt.Sprintf("%s : %s\n", style("[Scope]"), v.scope)
+	}
 	view += fmt.Sprintf("%s %s : %s", style("[Message]"), counter, i.msgInput.View())
 
 	if i.err != "" {

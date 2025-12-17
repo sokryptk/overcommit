@@ -100,7 +100,7 @@ func (tsv *TypeSelectorView) Update(msg tea.Msg, v PageView) (PageView, tea.Cmd)
 				return PageView{}, tea.Quit
 			}
 
-			v.Page = MSG
+			v.Page = SCOPE
 		default:
 			index, err := strconv.Atoi(keypress)
 			if err != nil {
@@ -126,7 +126,7 @@ func (tsv *TypeSelectorView) Update(msg tea.Msg, v PageView) (PageView, tea.Cmd)
 					return PageView{}, tea.Quit
 				}
 
-				v.Page = MSG
+				v.Page = SCOPE
 			}
 		}
 	}
