@@ -23,10 +23,9 @@ func main() {
 	}
 
 	if len(os.Args) > 1 && (os.Args[1] == "-i" || os.Args[1] == "--init") {
-		hook := "$PWD/.git/hooks/prepare-commit-msg"
-		_ = os.Rename(os.ExpandEnv(fmt.Sprintf("%s.sample", hook)), os.ExpandEnv(fmt.Sprintf("%s.bak", hook)))
-		_ = os.WriteFile(os.ExpandEnv(hook), []byte("#!/bin/sh\novercommit \"$1\" \"$2\"\n"), 0755)
-		fmt.Println("overcommit installed! just run: overcommit")
+		exec.Command("git", "config", "alias.c", "!overcommit").Run()
+		fmt.Println("overcommit installed!")
+		fmt.Println("use: git c")
 		return
 	}
 
