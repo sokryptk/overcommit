@@ -48,7 +48,7 @@ func main() {
 	}
 
 	selector := components.NewTypeSelector(c.Keys)
-	committer := components.NewCommitView()
+	committer := components.NewCommitView(c.Lint.MaxSubjectLength)
 
 	m := components.PageView{Page: components.SELECTION, Selector: &selector, Committer: &committer, Template: c.Template}
 

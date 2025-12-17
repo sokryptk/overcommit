@@ -11,18 +11,20 @@ import (
 )
 
 type CommitView struct {
-	msgInput textinput.Model
+	msgInput  textinput.Model
+	maxLength int
+	err       string
 }
 
-func NewCommitView() CommitView {
+func NewCommitView(maxLength int) CommitView {
 	ti := textinput.New()
-	ti.Prompt = fmt.Sprintf("%s : ", SetTextStyle("[Enter commit message]"))
-	ti.Placeholder = "pikachu"
-
+	ti.Prompt = ""
+	ti.Placeholder = "describe your change"
 	ti.Focus()
 
 	return CommitView{
-		msgInput: ti,
+		msgInput:  ti,
+		maxLength: maxLength,
 	}
 }
 
@@ -31,27 +33,45 @@ func (i *CommitView) Update(msg tea.Msg, v PageView) (PageView, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		switch keypress := msg.String(); keypress {
+		switch msg.String() {
 		case "enter":
-			fileName := os.Args[1]
-			_ = utils.ReplaceHeaderFromCommit(utils.BuildPrefixWithMsg(v.Template, v.selected.Prefix, i.msgInput.Value()), fileName)
+			val := i.msgInput.Value()
+			if len(val) == 0 {
+				i.err = "message required"
+				return v, nil
+			}
+			if len(val) > i.maxLength {
+				i.err = fmt.Sprintf("exceeds %d chars", i.maxLength)
+				return v, nil
+			}
+			i.err = ""
 
+			fileName := os.Args[1]
+			_ = utils.ReplaceHeaderFromCommit(utils.BuildPrefixWithMsg(v.Template, v.selected.Prefix, val), fileName)
 			return PageView{}, tea.Quit
 		}
 	}
 
 	i.msgInput, cmd = i.msgInput.Update(msg)
-
 	return v, cmd
 }
 
 func (i CommitView) View(v PageView) string {
-	var view string
-
 	style := termenv.String().Bold().Foreground(ACCENT).Styled
+	errStyle := termenv.String().Bold().Foreground(term.Color("#FF5555")).Styled
 
-	view += fmt.Sprintf("%s : %s - %s\n", style("[Commit Type]"), v.selected.Prefix, v.selected.Description)
-	view += i.msgInput.View()
+	currentLen := len(i.msgInput.Value())
+	counter := fmt.Sprintf("[%d/%d]", currentLen, i.maxLength)
+	if currentLen > i.maxLength {
+		counter = errStyle(counter)
+	}
+
+	view := fmt.Sprintf("%s : %s - %s\n", style("[Commit Type]"), v.selected.Prefix, v.selected.Description)
+	view += fmt.Sprintf("%s %s : %s", style("[Message]"), counter, i.msgInput.View())
+
+	if i.err != "" {
+		view += "\n" + errStyle(i.err)
+	}
 
 	return view
 }
