@@ -42,7 +42,7 @@ func main() {
 		}
 	}
 
-	c, err := utils.GenerateConfig(config)
+	c, err := utils.LoadConfig(config)
 	if err != nil {
 		log.Fatal(err)
 	}
