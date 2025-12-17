@@ -122,6 +122,23 @@ func GetScopes() []string {
 }
 
 func GetStagedDiff() (string, error) {
-	out, err := exec.Command("git", "diff", "--cached").Output()
-	return string(out), err
+	out, _ := exec.Command("git", "diff", "--cached", "-p", "--no-color").Output()
+	if len(out) > 0 {
+		return string(out), nil
+	}
+
+	files, err := exec.Command("git", "diff", "--cached", "--name-only").Output()
+	if err != nil {
+		return "", err
+	}
+
+	var result strings.Builder
+	for _, f := range strings.Split(strings.TrimSpace(string(files)), "\n") {
+		if f == "" {
+			continue
+		}
+		content, _ := exec.Command("git", "show", ":"+f).Output()
+		result.WriteString(fmt.Sprintf("=== %s ===\n%s\n", f, string(content)))
+	}
+	return result.String(), nil
 }

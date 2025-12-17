@@ -77,7 +77,7 @@ func setDefaults(cfg *Config) {
 		cfg.LLM.Backend = "ollama"
 	}
 	if cfg.LLM.Model == "" {
-		cfg.LLM.Model = "llama3.2"
+		cfg.LLM.Model = "tinyllama"
 	}
 }
 

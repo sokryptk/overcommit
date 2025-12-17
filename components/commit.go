@@ -29,7 +29,7 @@ type CommitView struct {
 func NewCommitView(maxLength int, llmCfg utils.LLMConfig) CommitView {
 	ti := textinput.New()
 	ti.Prompt = ""
-	ti.Placeholder = "describe your change (g to generate)"
+	ti.Placeholder = "describe your change (ctrl+g to generate)"
 	ti.Focus()
 
 	sp := spinner.New()
@@ -86,12 +86,10 @@ func (c *CommitView) Update(msg tea.Msg, v PageView) (PageView, tea.Cmd) {
 		}
 
 		switch msg.String() {
-		case "g":
-			if c.msgInput.Value() == "" {
-				c.generating = true
-				c.err = ""
-				return v, tea.Batch(c.spinner.Tick, c.generate(v))
-			}
+		case "ctrl+g":
+			c.generating = true
+			c.err = ""
+			return v, tea.Batch(c.spinner.Tick, c.generate(v))
 		case "enter":
 			val := c.msgInput.Value()
 			if len(val) == 0 {
