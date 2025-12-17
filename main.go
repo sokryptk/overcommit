@@ -50,7 +50,7 @@ func main() {
 	selector := components.NewTypeSelector(c.Keys)
 	committer := components.NewCommitView()
 
-	m := components.PageView{Page: components.SELECTION, Selector: &selector, Committer: committer, Template: c.Template}
+	m := components.PageView{Page: components.SELECTION, Selector: &selector, Committer: &committer, Template: c.Template}
 
 	if err := tea.NewProgram(m, tea.WithAltScreen(), tea.WithANSICompressor()).Start(); err != nil {
 		fmt.Println("Error running program:", err)

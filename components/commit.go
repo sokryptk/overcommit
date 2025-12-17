@@ -10,8 +10,6 @@ import (
 	"me.kryptk.overcommit/utils"
 )
 
-var CommitViewInstance = NewCommitView()
-
 type CommitView struct {
 	msgInput textinput.Model
 }

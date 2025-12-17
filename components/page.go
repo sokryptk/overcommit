@@ -18,7 +18,7 @@ type PageView struct {
 	message   string
 	Template  utils.Template
 	Selector  *TypeSelectorView
-	Committer CommitView
+	Committer *CommitView
 }
 
 func (p PageView) Init() tea.Cmd {
@@ -38,7 +38,7 @@ func (p PageView) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return p.Selector.Update(msg, p)
 	}
 
-	return CommitViewInstance.Update(msg, p)
+	return p.Committer.Update(msg, p)
 }
 
 func (p PageView) View() string {
@@ -51,5 +51,5 @@ func (p PageView) View() string {
 		return p.Selector.View()
 	}
 
-	return CommitViewInstance.View(p)
+	return p.Committer.View(p)
 }
